@@ -1,8 +1,10 @@
 #pragma once
 
-#include <string>
+#include "./Util.h"
+#include <array>
 #include <string_view>
 #include <vector>
+#include <cstdint>
 
 
 namespace rinhaback::api
@@ -13,8 +15,8 @@ namespace rinhaback::api
 		struct Transaction
 		{
 			int value;
-			std::string description;
-			std::string realized_at;
+			std::array<char, 11> description;
+			DateTimeMillis dateTime;
 		};
 
 		struct PostTransactionResponse
@@ -25,7 +27,7 @@ namespace rinhaback::api
 
 		struct GetStatementResponse
 		{
-			std::string date;
+			DateTimeMillis dateTime;
 			int overdraft;
 			int balance;
 			std::vector<Transaction> lastTransactions;

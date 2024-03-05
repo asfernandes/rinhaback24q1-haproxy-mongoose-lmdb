@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include "lmdb.h"
 
@@ -15,7 +16,7 @@ namespace rinhaback::api
 	{
 		uint8_t reverseSeq[4];
 		int64_t dateTime;
-		char description[11];
+		std::array<char, 11> description;
 		int value;
 		int balance;
 		int overdraft;

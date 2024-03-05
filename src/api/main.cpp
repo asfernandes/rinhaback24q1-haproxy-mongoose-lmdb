@@ -66,8 +66,8 @@ namespace rinhaback::api
 					auto ptr = response.json.begin();
 
 					ptr = std::format_to_n(ptr, response.json.end() - ptr,
-						R"({{"saldo":{{"total":{},"data_extrato":"{}","limite":{}}},"ultimas_transacoes":[)",
-						serviceResponse.balance, serviceResponse.date, serviceResponse.overdraft)
+						R"({{"saldo":{{"total":{},"data_extrato":"{:%FT%TZ}","limite":{}}},"ultimas_transacoes":[)",
+						serviceResponse.balance, serviceResponse.dateTime, serviceResponse.overdraft)
 							  .out;
 
 					bool first = true;
@@ -80,9 +80,9 @@ namespace rinhaback::api
 							*ptr++ = ',';
 
 						ptr = std::format_to_n(ptr, response.json.end() - ptr,
-							R"({{"valor":{},"tipo":"{}","descricao":"{}","realizada_em":"{}"}})",
-							abs(transaction.value), (transaction.value < 0 ? 'd' : 'c'), transaction.description,
-							transaction.realized_at)
+							R"({{"valor":{},"tipo":"{}","descricao":"{}","realizada_em":"{:%FT%TZ}"}})",
+							abs(transaction.value), (transaction.value < 0 ? 'd' : 'c'),
+							transaction.description.begin(), transaction.dateTime)
 								  .out;
 					}
 

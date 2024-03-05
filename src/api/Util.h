@@ -16,7 +16,9 @@ namespace rinhaback::api
 	static constexpr int HTTP_STATUS_UNPROCESSABLE_CONTENT = 422;
 	static constexpr int HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 
-	inline std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> getCurrentDateTime()
+	using DateTimeMillis = std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>;
+
+	inline DateTimeMillis getCurrentDateTime()
 	{
 		return std::chrono::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
 	}
@@ -26,16 +28,10 @@ namespace rinhaback::api
 		return getCurrentDateTime().time_since_epoch().count();
 	}
 
-	inline std::string getCurrentDateTimeAsString()
+	inline DateTimeMillis intDateTimeToChrono(int64_t dateTime)
 	{
-		return std::format("{:%FT%TZ}", getCurrentDateTime());
-	}
-
-	inline std::string intDateTimeToString(int64_t dateTime)
-	{
-		return std::format("{:%FT%TZ}",
-			std::chrono::floor<std::chrono::milliseconds>(
-				std::chrono::system_clock::time_point(std::chrono::milliseconds(dateTime))));
+		return std::chrono::floor<std::chrono::milliseconds>(
+			std::chrono::system_clock::time_point(std::chrono::milliseconds(dateTime)));
 	}
 
 	inline std::optional<int> parseInt(std::string_view str)

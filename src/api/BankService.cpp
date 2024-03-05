@@ -2,6 +2,8 @@
 #include "./Config.h"
 #include "./Database.h"
 #include "./Util.h"
+#include <array>
+#include <chrono>
 #include <mutex>
 #include <string>
 #include <string_view>
@@ -23,14 +25,13 @@ namespace rinhaback::api
 	int BankService::postTransaction(
 		PostTransactionResponse* response, int accountId, int value, string_view description)
 	{
-
 		TransactionKey key;
 		key.accountId = accountId;
 
 		TransactionData data;
 		memset(&data, 0, sizeof(data));
 		data.dateTime = getCurrentDateTimeAsInt();
-		memcpy(data.description, description.begin(), description.length());
+		memcpy(data.description.begin(), description.begin(), description.length());
 		data.value = value;
 
 		std::unique_lock lock(mutex);
@@ -127,7 +128,7 @@ namespace rinhaback::api
 
 		response->balance = static_cast<const TransactionData*>(mdbData.mv_data)->balance;
 		response->overdraft = static_cast<const TransactionData*>(mdbData.mv_data)->overdraft;
-		response->date = getCurrentDateTimeAsString();
+		response->dateTime = getCurrentDateTime();
 
 		response->lastTransactions.reserve(MAX_TRANSACTIONS);
 
@@ -139,7 +140,7 @@ namespace rinhaback::api
 				break;
 
 			response->lastTransactions.emplace_back(
-				data->value, string(data->description), intDateTimeToString(data->dateTime));
+				data->value, data->description, intDateTimeToChrono(data->dateTime));
 
 			if (int rc = mdb_cursor_get(cursor, &mdbKey, &mdbData, MDB_NEXT_DUP); rc != 0)
 			{
