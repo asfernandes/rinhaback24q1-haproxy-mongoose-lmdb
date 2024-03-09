@@ -180,6 +180,27 @@ namespace rinhaback::api
 				});
 		}
 
+		{
+			const unsigned cpuCount = sysconf(_SC_NPROCESSORS_ONLN);
+			unsigned threadNum = 0;
+
+			std::cout << "CPU count: " << cpuCount << std::endl;
+
+			for (auto& thread : threads)
+			{
+				unsigned threadCpu = threadNum % cpuCount;
+				std::cout << "Set thread " << threadNum << " affinity to CPU " << threadCpu << std::endl;
+
+				cpu_set_t cpuSet;
+				CPU_ZERO(&cpuSet);
+				CPU_SET(threadCpu, &cpuSet);
+
+				pthread_setaffinity_np(thread.native_handle(), sizeof(cpuSet), &cpuSet);
+
+				++threadNum;
+			}
+		}
+
 		std::cout << "Server listening on " << Config::listenAddress << ":" << Config::listenPortInit << ".."
 				  << (Config::listenPortInit + Config::netWorkers - 1) << std::endl;
 
