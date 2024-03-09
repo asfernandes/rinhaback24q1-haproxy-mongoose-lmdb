@@ -16,7 +16,8 @@ services:
       DATABASE: /data/database
       DATABASE_SIZE: 10485760
       DATABASE_INIT: true
-      LISTEN_ADDRESS: 127.0.0.1:9997
+      LISTEN_ADDRESS: 127.0.0.1
+      LISTEN_PORT_INIT: 9980
     ulimits:
       nofile:
         soft: 1000000
@@ -33,7 +34,7 @@ services:
     environment:
       <<: *env
       DATABASE_INIT: false
-      LISTEN_ADDRESS: 127.0.0.1:9998
+      LISTEN_PORT_INIT: 9990
     pid: "service:api1"
     depends_on:
       - api1

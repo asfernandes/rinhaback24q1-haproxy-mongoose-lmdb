@@ -165,11 +165,13 @@ namespace rinhaback::api
 		for (unsigned i = 0; i < Config::netWorkers; ++i)
 		{
 			threads.emplace_back(
-				[]
+				[i]
 				{
+					const auto listenAddress = Config::listenAddress + ":" + std::to_string(Config::listenPortInit + i);
+
 					mg_mgr mgr;
 					mg_mgr_init(&mgr);
-					mg_http_listen(&mgr, Config::listenAddress.c_str(), httpHandler, nullptr);
+					mg_http_listen(&mgr, listenAddress.c_str(), httpHandler, nullptr);
 
 					while (!finish)
 						mg_mgr_poll(&mgr, Config::pollTime);
@@ -178,7 +180,8 @@ namespace rinhaback::api
 				});
 		}
 
-		std::cout << "Server listening on " << Config::listenAddress << std::endl;
+		std::cout << "Server listening on " << Config::listenAddress << ":" << Config::listenPortInit << ".."
+				  << (Config::listenPortInit + Config::netWorkers - 1) << std::endl;
 
 		threads.clear();
 
